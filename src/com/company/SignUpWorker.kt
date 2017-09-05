@@ -69,7 +69,7 @@ object SignUpWorker {
 
         for ((email, password) in users) {
             writer.beginObject()
-            writer.name("MemberEmail").value(email)
+            writer.name("email").value(email)
             writer.name("password").value(password)
             writer.endObject()
         }

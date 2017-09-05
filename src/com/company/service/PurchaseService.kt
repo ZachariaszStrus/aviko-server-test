@@ -9,12 +9,16 @@ import com.company.network.fromJson2
 import com.google.gson.Gson
 
 
-object PurchaseService {
+class PurchaseService(val token: String) {
     val savePhoto = "/purchase/register-purchase"
     val registerPurchase = "/purchase/register-purchase"
 
+
     fun savePhoto(photo: Photo): String? {
-        val responseBody = Http.post(savePhoto, photo)?.body()?.string().toString()
+        val headers = HashMap<String, String>()
+        headers.put("Authorization", "Bearer $token")
+
+        val responseBody = Http.post(savePhoto, photo, headers)?.body()?.string().toString()
         val response = Gson().fromJson2<PhotoSaveResponse>(responseBody)
 
         return if(response.status == "ok") {
@@ -26,7 +30,10 @@ object PurchaseService {
     }
 
     fun register(purchase: PurchaseRegister): Int? {
-        val responseBody = Http.post(registerPurchase, purchase)?.body()?.string().toString()
+        val headers = HashMap<String, String>()
+        headers.put("Authorization", "Bearer $token")
+
+        val responseBody = Http.post(registerPurchase, purchase, headers)?.body()?.string().toString()
         val response = Gson().fromJson2<PurchaseRegisterResponse>(responseBody)
 
         return if(response.status == "ok") {

@@ -1,10 +1,10 @@
 package com.company.generator
 
+import com.company.model.Photo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
@@ -18,7 +18,7 @@ object ImageGenerator {
         val writer = JsonWriter(FileWriter("photos.json"))
         this.gson.toJson(
                 images.map { img: String -> "data:image/jpeg;base64, $img" },
-                object : TypeToken<List<String>>() {}.type,
+                object : TypeToken<List<Photo>>() {}.type,
                 writer)
 
     }
@@ -30,4 +30,17 @@ object ImageGenerator {
 
     class Data(val images: List<String>)
 
+
+    fun getPhotosList(): ArrayList<Photo> {
+        val result = ArrayList<Photo>()
+        result.add(Photo("data:image/jpeg;base64, null"))
+        result.add(Photo("data:image/jpeg;base64, null"))
+        result.add(Photo("data:image/jpeg;base64, null"))
+
+        return result
+    }
+
+    fun getPurchasesNumber(): Int {
+        return 2
+    }
 }
