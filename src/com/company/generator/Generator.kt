@@ -1,13 +1,9 @@
 package com.company.generator
 
 import com.google.gson.Gson
-import java.io.FileReader
-import com.google.gson.stream.JsonReader
 import com.google.gson.reflect.TypeToken
-
-
-
-
+import com.google.gson.stream.JsonReader
+import java.io.FileReader
 
 class Generator {
 
