@@ -1,17 +1,15 @@
 package com.company
 
-import com.company.network.Http
-import java.util.*
-
-val host = "http://avikobenefits.pl/backend/api"
-val signUp = host + "/account/register"
-
+import com.company.model.UserRegister
+import com.company.service.AccountService
 
 fun main(args: Array<String>) {
 
-    val params = HashMap<String, String>()
-    params.put("email", "s@ss.ss")
-    val response = Http.post(signUp, params)
+    val user = UserRegister(
+            "jan3323s13@wp.pl",
+            "Jan",
+            "Kowalski")
 
-    System.out.println(response?.body().toString())
+    val response = AccountService.signUp(user)
+    System.out.println(response)
 }
