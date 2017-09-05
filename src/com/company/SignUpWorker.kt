@@ -1,6 +1,7 @@
 package com.company
 
-import com.company.model.UserRegister
+import com.company.generator.UserGenerator
+import com.company.model.UserLogin
 import com.company.service.AccountService
 import com.google.gson.stream.JsonWriter
 import java.io.FileWriter
@@ -8,37 +9,63 @@ import kotlin.system.measureTimeMillis
 
 
 object SignUpWorker {
+    var timeSum = 0L
+    var signUpFailures = 0
+    val userArray = ArrayList<UserLogin>()
 
-    /**
-     * @return average http execution time
-     */
-    fun start(quantity: Int): Long {
-        var timeSum = 0L
+    fun start(quantity: Int) {
+        userArray.ensureCapacity(quantity)
+        timeSum = 0L
+        signUpFailures = 0
         for (i in 1..quantity) {
-            System.out.print("$i) ")
-            val time = measureTimeMillis{
-                val token = AccountService.signUp(getUser(i))
-                System.out.print("Token : $token, ")
+            val user = signUpSingleUser()
+            if(user != null) {
+                userArray.add(user)
             }
-            timeSum += time
-            System.out.print("Time : ${time}ms ")
-            System.out.print("\n")
         }
 
-        System.out.print("Average time : ${timeSum/quantity} \n")
-        return timeSum/quantity
+        saveUsers("users.json", userArray)
+
+        System.out.print("Average time : ${timeSum/quantity}ms \n")
+        System.out.print("Total failures : ${signUpFailures}ms \n")
     }
 
-    fun getUser(i: Int) = UserRegister("jan@wfdsfp.pl" + i, "Jan", "Kowalski")
+    private fun signUpSingleUser(): UserLogin? {
+        val user = getUser()
+        var token: String? = null
 
-    fun saveUsers(fileName: String, users: Collection<UserRegister>) {
+        val time = measureTimeMillis{
+            token = AccountService.signUp(user)
+            if(token == null) {
+                signUpFailures++
+                System.out.print("Error - ${user.MemberEmail}")
+            }
+            else {
+                System.out.print("User : ${user.MemberEmail} - ${user.MemberName} - ${user.MemberSurname}, ")
+            }
+        }
+        timeSum += time
+        System.out.print("Time : ${time}ms ")
+        System.out.print("\n")
+
+        return if(token != null) {
+            UserLogin(user.MemberEmail, user.password)
+        }
+        else {
+            null
+        }
+    }
+
+    private fun getUser() = UserGenerator.getUserRegister()
+
+    private fun saveUsers(fileName: String, users: ArrayList<UserLogin>) {
         val writer = JsonWriter(FileWriter(fileName))
 
         writer.setIndent("  ")
         writer.beginArray()
         for (u in users) {
             writer.beginObject()
-            writer.name("MemberEmail").value(u.MemberEmail)
+            writer.name("MemberEmail").value(u.email)
             writer.name("password").value(u.password)
             writer.endObject()
         }

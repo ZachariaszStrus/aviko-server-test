@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken
 import java.util.*
 import kotlin.collections.HashMap
 
-class Generator {
+object UserGenerator {
     private val gson = Gson()
     private val names = this.getList("names.json")
     private val surnames = this.getList("surnames.json")
