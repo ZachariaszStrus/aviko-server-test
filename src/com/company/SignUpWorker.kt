@@ -1,6 +1,6 @@
 package com.company
 
-import com.company.generator.Generator
+import com.company.generator.UserGenerator
 import com.company.model.UserLogin
 import com.company.service.AccountService
 import com.google.gson.stream.JsonWriter
@@ -56,7 +56,7 @@ object SignUpWorker {
         }
     }
 
-    private fun getUser() = Generator.getUserRegister()
+    private fun getUser() = UserGenerator.getUserRegister()
 
     private fun saveUsers(fileName: String, users: ArrayList<UserLogin>) {
         val writer = JsonWriter(FileWriter(fileName))
