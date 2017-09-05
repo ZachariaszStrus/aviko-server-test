@@ -10,7 +10,7 @@ object ImageGenerator {
 
     init {
         var counter = 0
-        val data = this.getList("images.json");
+        val data = this.getList("images.json")
         data.images.forEach(fun (img: String) {
             System.out.println(img.length)
             counter++

@@ -11,17 +11,22 @@ object Http {
     private val client = OkHttpClient()
     private val gson = Gson()
 
-    fun post(targetURL: String, urlParameters: Any): Response? {
+    fun post(targetURL: String, urlParameters: Any, headers: Map<String, String> = HashMap()): Response? {
 
         val mediaType = MediaType.parse("application/json")
         val body = RequestBody.create(mediaType, gson.toJson(urlParameters))
 
-        val request = Request.Builder()
+        val requestBuilder = Request.Builder()
                 .url(host + targetURL)
                 .post(body)
                 .addHeader("accept", "application/json")
                 .addHeader("content-type", "application/json")
-                .build()
+
+        for((key, value) in headers) {
+            requestBuilder.addHeader(key, value)
+        }
+
+        val request = requestBuilder.build()
 
         return client.newCall(request).execute()
     }
