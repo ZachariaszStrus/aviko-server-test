@@ -34,13 +34,21 @@ object ImageGenerator {
     fun getPhotosList(): ArrayList<Photo> {
         val result = ArrayList<Photo>()
         result.add(Photo("data:image/jpeg;base64, null"))
-        result.add(Photo("data:image/jpeg;base64, null"))
-        result.add(Photo("data:image/jpeg;base64, null"))
+        result.add(Photo("data:image/jpeg;base64, null1"))
+        result.add(Photo("data:image/jpeg;base64, null2"))
 
         return result
     }
 
     fun getPurchasesNumber(): Int {
         return 2
+    }
+
+    fun getProductsInPurchase(): Int {
+        return 2
+    }
+
+    fun getPurchaseStatus(): Int {
+        return 1 // 1/0
     }
 }

@@ -10,7 +10,7 @@ import com.google.gson.Gson
 
 
 class PurchaseService(val token: String) {
-    val savePhoto = "/purchase/register-purchase"
+    val savePhoto = "/purchase/save-picture"
     val registerPurchase = "/purchase/register-purchase"
 
 

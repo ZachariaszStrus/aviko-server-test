@@ -66,13 +66,16 @@ object PurchaseWorker {
         val purchaseRegister = PurchaseRegister()
 
         photos[0].PP_Type = "0"
+        photos[0].PP_Photo = purchaseService.savePhoto(photos[0]) ?: ""
         purchaseRegister.purchasePictures.add(photos[0])
 
         photos[1].PP_Type = "A"
+        photos[1].PP_Photo = purchaseService.savePhoto(photos[1]) ?: ""
         purchaseRegister.purchasePictures.add(photos[1])
 
         for(i in 2..(photos.size - 1)) {
             photos[i].PP_Type = "Temp${i-1}"
+            photos[i].PP_Photo = purchaseService.savePhoto(photos[i]) ?: ""
             purchaseRegister.purchasePictures.add(photos[i])
         }
 
@@ -92,7 +95,11 @@ object PurchaseWorker {
         writer.beginArray()
 
         for (id in purchaseArray) {
-            writer.value(id)
+            writer.beginObject()
+            writer.name("idPurchase").value(id)
+            writer.name("PurchaseItems").value(ImageGenerator.getPurchasesNumber())
+            writer.name("PurchaseStatus").value(ImageGenerator.getPurchaseStatus())
+            writer.endObject()
         }
 
         writer.endArray()
