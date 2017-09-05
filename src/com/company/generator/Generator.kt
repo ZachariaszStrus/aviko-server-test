@@ -1,5 +1,6 @@
 package com.company.generator
 
+import com.company.model.UserRegister
 import com.google.gson.Gson
 import java.io.FileReader
 import com.google.gson.stream.JsonReader
@@ -15,24 +16,19 @@ class Generator {
 
     private val emails = HashMap<String, Int>()
 
-    init {
-        for (i in 1..100000) {
-            System.out.println(this.getUserRegister())
-        }
-    }
-
-    fun getUserRegister(): String {
+    fun getUserRegister(): UserRegister {
         val name = this.randomEntry(this.names).name
         val surname = this.randomEntry(this.surnames).name
         val login = this.generateLogin(name, surname)
 
         return if(!this.emails.contains(login)) {
             this.emails.put(login, 0)
-            this.generateEmail(login)
+            UserRegister(this.generateEmail(login), name.toLowerCase(), surname.toLowerCase())
+
         } else {
             val value = this.emails[login]!!.inc()
             this.emails.put(login, value)
-            this.generateEmail(login + value)
+            UserRegister(this.generateEmail(login + value), name.toLowerCase(), surname.toLowerCase())
         }
 
     }
