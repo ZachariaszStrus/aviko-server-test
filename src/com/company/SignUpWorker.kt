@@ -9,12 +9,12 @@ import kotlin.system.measureTimeMillis
 
 
 object SignUpWorker {
-    var timeSum = 0L
-    var signUpFailures = 0
-    val userArray = ArrayList<UserLogin>()
+    private var timeSum = 0L
+    private var signUpFailures = 0
+    private var userArray = ArrayList<UserLogin>()
 
-    fun start(quantity: Int) {
-        userArray.ensureCapacity(quantity)
+    fun start(quantity: Int, fileName: String = "users.json") {
+        userArray = ArrayList(quantity)
         timeSum = 0L
         signUpFailures = 0
         for (i in 1..quantity) {
@@ -24,26 +24,29 @@ object SignUpWorker {
             }
         }
 
-        saveUsers("users.json", userArray)
+        saveUsers(fileName, userArray)
 
         System.out.print("Average time : ${timeSum/quantity}ms \n")
-        System.out.print("Total failures : ${signUpFailures}ms \n")
+        System.out.print("Total failures : ${signUpFailures} \n")
     }
 
     private fun signUpSingleUser(): UserLogin? {
         val user = getUser()
         var token: String? = null
 
+        // measure time of http request
         val time = measureTimeMillis{
             token = AccountService.signUp(user)
-            if(token == null) {
-                signUpFailures++
-                System.out.print("Error - ${user.MemberEmail}")
-            }
-            else {
-                System.out.print("User : ${user.MemberEmail} - ${user.MemberName} - ${user.MemberSurname}, ")
-            }
         }
+
+        if(token == null) {
+            signUpFailures++
+            System.out.print("Error : ${user.MemberEmail}, \t\t")
+        }
+        else {
+            System.out.print("Success : ${user.MemberEmail}, \t\t")
+        }
+
         timeSum += time
         System.out.print("Time : ${time}ms ")
         System.out.print("\n")
@@ -63,12 +66,14 @@ object SignUpWorker {
 
         writer.setIndent("  ")
         writer.beginArray()
-        for (u in users) {
+
+        for ((email, password) in users) {
             writer.beginObject()
-            writer.name("MemberEmail").value(u.email)
-            writer.name("password").value(u.password)
+            writer.name("MemberEmail").value(email)
+            writer.name("password").value(password)
             writer.endObject()
         }
+
         writer.endArray()
         writer.close()
     }
