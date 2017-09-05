@@ -1,47 +1,30 @@
 package com.company.network
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.*
 
-import java.io.IOException
 
+val host = "http://eurekaweb.eu/backend/api"
 
 object Http {
-    fun post(targetURL: String, urlParameters: Map<String, String>): Response? {
-        try {
-            val client = OkHttpClient()
+    private val client = OkHttpClient()
+    private val gson = Gson()
 
-            val mediaType = MediaType.parse("application/json")
-            val body = RequestBody.create(mediaType, urlParameters.toParamsString())
+    fun post(targetURL: String, urlParameters: Any): Response? {
 
-            val request = Request.Builder()
-                    .url(targetURL)
-                    .post(body)
-                    .addHeader("accept", "application/json")
-                    .addHeader("content-type", "application/json")
-                    .build()
+        val mediaType = MediaType.parse("application/json")
+        val body = RequestBody.create(mediaType, gson.toJson(urlParameters))
 
-            val response = client.newCall(request).execute()
-            return response
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
+        val request = Request.Builder()
+                .url(host + targetURL)
+                .post(body)
+                .addHeader("accept", "application/json")
+                .addHeader("content-type", "application/json")
+                .build()
 
+        return client.newCall(request).execute()
     }
 }
 
-fun Map<String, String>.toParamsString(): String {
-    if(this.isEmpty()) return ""
-
-    val result = StringBuilder()
-    result.append("{")
-    this.map {
-        "\"${it.key}\":\"${ it.value}\","
-    }.forEach {
-        result.append(it)
-    }
-    result.deleteCharAt(result.length - 1)
-    result.append("}")
-
-    return result.toString()
-}
+inline fun <reified T> Gson.fromJson2(json: String) = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
