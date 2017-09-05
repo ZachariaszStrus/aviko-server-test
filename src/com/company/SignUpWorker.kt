@@ -13,7 +13,7 @@ object SignUpWorker {
     private var signUpFailures = 0
     private var userArray = ArrayList<UserLogin>()
 
-    fun start(quantity: Int, fileName: String = "users.json") {
+    fun start(quantity: Int, fileName: String = "users_1.json") {
         userArray = ArrayList(quantity)
         timeSum = 0L
         signUpFailures = 0
@@ -69,7 +69,7 @@ object SignUpWorker {
 
         for ((email, password) in users) {
             writer.beginObject()
-            writer.name("MemberEmail").value(email)
+            writer.name("email").value(email)
             writer.name("password").value(password)
             writer.endObject()
         }
