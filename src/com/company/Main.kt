@@ -2,9 +2,7 @@ package com.company
 
 
 fun main(args: Array<String>) {
-    //SignUpWorker.start(6000)
-
-
+    SignUpWorker.start(6000)
 }
 
 
