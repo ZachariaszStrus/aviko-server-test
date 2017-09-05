@@ -1,5 +1,6 @@
 package com.company.generator
 
+import com.company.model.Photo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
@@ -12,22 +13,12 @@ object ImageGenerator {
     private val gson = Gson()
 
     fun init() {
-        var images = this.getList("images.json").images.filter { string -> string != "" }.toMutableList()
-        images.removeAt(images.size - 6)
-
-        val writer = JsonWriter(FileWriter("photos.json"))
-        this.gson.toJson(
-                images.map { img: String -> "data:image/jpeg;base64, $img" },
-                object : TypeToken<List<String>>() {}.type,
-                writer)
-
+        val photos = this.getList("photos.json")
     }
 
-    private fun getList(filename: String): Data {
+    private fun getList(filename: String): List<Photo> {
         val reader = JsonReader(FileReader(filename))
-        return this.gson.fromJson(reader, object : TypeToken<Data>() {}.type)
+        return this.gson.fromJson(reader, object : TypeToken<List<Photo>>() {}.type)
     }
-
-    class Data(val images: List<String>)
 
 }
