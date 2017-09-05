@@ -2,13 +2,13 @@ package com.company.generator
 
 import com.company.model.UserRegister
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
 import java.io.FileReader
+import com.google.gson.stream.JsonReader
+import com.google.gson.reflect.TypeToken
 import java.util.*
 import kotlin.collections.HashMap
 
-object Generator {
+object UserGenerator {
     private val gson = Gson()
     private val names = this.getList("names.json")
     private val surnames = this.getList("surnames.json")
