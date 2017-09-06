@@ -27,14 +27,17 @@ object PurchaseWorker {
         purchaseArray = ArrayList()
         purchasesFileName = purchasesFile
 
+        var i = 1
+        val size = userArray.size
         for(user in userArray) {
-            System.out.println("User : ${user.email}")
+            System.out.println("User ($i/$size) : ${user.email}")
             val time = measureTimeMillis{
                 registerPurchases(user)
             }
             timeSum += time
             System.out.println("User time : $time")
             System.out.println("--------------------------------------------------------------------")
+            i++
         }
 
         System.out.println("--------------------------------------------------------------------")
