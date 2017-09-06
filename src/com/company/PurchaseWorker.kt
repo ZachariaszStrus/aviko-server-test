@@ -2,6 +2,7 @@ package com.company
 
 import com.company.generator.ImageGenerator
 import com.company.model.Photo
+import com.company.model.PurchaseRecord
 import com.company.model.PurchaseRegister
 import com.company.model.UserLogin
 import com.company.service.AccountService
@@ -21,13 +22,15 @@ object PurchaseWorker {
     lateinit var purchasesFileName: String
     private var timeSum = 0L
     private var purchaseSum = 0
+    private var saveFreq = 1
 
 
-    fun start(usersFileName: String, purchasesFile: String) {
+    fun start(usersFileName: String, purchasesFile: String, saveF: Int = 1) {
         readUsers(usersFileName)
         purchaseArray = ArrayList()
         purchasesFileName = purchasesFile
         purchaseSum = 0
+        saveFreq = saveF
 
         var i = 1
         val size = userArray.size
@@ -42,6 +45,8 @@ object PurchaseWorker {
                 System.out.println("--------------------------------------------------------------------")
                 i++
 
+
+                if(i % saveFreq == 0) savePurchases()
 
                 System.out.println("--------------------------------------------------------------------")
                 System.out.println("Average time : ${timeSum/i}")
@@ -107,10 +112,24 @@ object PurchaseWorker {
     }
 
     private fun savePurchases() {
-        val writer = JsonWriter(FileWriter(purchasesFileName))
+        System.out.println("Saving ... ")
 
+        val reader = JsonReader(FileReader(purchasesFileName))
+        val oldPurchaseArray: ArrayList<PurchaseRecord> =
+                Gson().fromJson(reader, object : TypeToken<ArrayList<PurchaseRecord>>() {}.type)
+        reader.close()
+
+        val writer = JsonWriter(FileWriter(purchasesFileName))
         writer.setIndent("  ")
         writer.beginArray()
+
+        for ((idPurchase, PurchaseItems, PurchaseStatus) in oldPurchaseArray) {
+            writer.beginObject()
+            writer.name("idPurchase").value(idPurchase)
+            writer.name("PurchaseItems").value(PurchaseItems)
+            writer.name("PurchaseStatus").value(PurchaseStatus)
+            writer.endObject()
+        }
 
         for (id in purchaseArray) {
             writer.beginObject()
@@ -122,5 +141,7 @@ object PurchaseWorker {
 
         writer.endArray()
         writer.close()
+
+        purchaseArray.clear()
     }
 }
