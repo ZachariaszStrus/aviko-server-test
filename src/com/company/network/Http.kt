@@ -8,13 +8,18 @@ import okhttp3.*
 val host = "http://eurekaweb.eu/backend/api"
 
 object Http {
-    private val client = OkHttpClient()
-    private val gson = Gson()
+    private val client: OkHttpClient
+
+    init {
+        val logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BASIC
+        client = OkHttpClient.Builder().addInterceptor(logging).build()
+    }
 
     fun post(targetURL: String, urlParameters: Any, headers: Map<String, String> = HashMap()): Response? {
 
         val mediaType = MediaType.parse("application/json")
-        val body = RequestBody.create(mediaType, gson.toJson(urlParameters))
+        val body = RequestBody.create(mediaType, Gson().toJson(urlParameters))
 
         val requestBuilder = Request.Builder()
                 .url(host + targetURL)

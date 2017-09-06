@@ -1,6 +1,7 @@
 package com.company
 
 import com.company.generator.ImageGenerator
+import com.company.model.Photo
 import com.company.model.PurchaseRegister
 import com.company.model.UserLogin
 import com.company.service.AccountService
@@ -65,18 +66,18 @@ object PurchaseWorker {
         val photos = ImageGenerator.getPhotosList()
         val purchaseRegister = PurchaseRegister()
 
-        photos[0].PP_Type = "0"
-        photos[0].PP_Photo = purchaseService.savePhoto(photos[0]) ?: ""
-        purchaseRegister.purchasePictures.add(photos[0])
+        purchaseRegister.purchasePictures.add(
+                Photo(purchaseService.savePhoto(photos[0])!!, "0")
+        )
 
-        photos[1].PP_Type = "A"
-        photos[1].PP_Photo = purchaseService.savePhoto(photos[1]) ?: ""
-        purchaseRegister.purchasePictures.add(photos[1])
+        purchaseRegister.purchasePictures.add(
+                Photo(purchaseService.savePhoto(photos[1])!!, "A")
+        )
 
         for(i in 2..(photos.size - 1)) {
-            photos[i].PP_Type = "Temp${i-1}"
-            photos[i].PP_Photo = purchaseService.savePhoto(photos[i]) ?: ""
-            purchaseRegister.purchasePictures.add(photos[i])
+            purchaseRegister.purchasePictures.add(
+                    Photo(purchaseService.savePhoto(photos[i])!!, "Temp${i-1}")
+            )
         }
 
         val purchaseId = purchaseService.register(purchaseRegister)
@@ -97,7 +98,7 @@ object PurchaseWorker {
         for (id in purchaseArray) {
             writer.beginObject()
             writer.name("idPurchase").value(id)
-            writer.name("PurchaseItems").value(ImageGenerator.getPurchasesNumber())
+            writer.name("PurchaseItems").value(ImageGenerator.getProductsInPurchase())
             writer.name("PurchaseStatus").value(ImageGenerator.getPurchaseStatus())
             writer.endObject()
         }

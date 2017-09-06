@@ -33,11 +33,12 @@ class PurchaseService(val token: String) {
         val headers = HashMap<String, String>()
         headers.put("Authorization", "Bearer $token")
 
-        val responseBody = Http.post(registerPurchase, purchase, headers)?.body()?.string().toString()
-        val response = Gson().fromJson2<PurchaseRegisterResponse>(responseBody)
+        val response = Http.post(registerPurchase, purchase, headers)
+        val responseBody = response?.body()?.string().toString()
+        val registerResponse = Gson().fromJson2<PurchaseRegisterResponse>(responseBody)
 
-        return if(response.status == "ok") {
-            response.idPurchase
+        return if(registerResponse.status == "ok") {
+            registerResponse.idPurchase
         }
         else {
             null

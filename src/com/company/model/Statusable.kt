@@ -1,6 +1,6 @@
 package com.company.model
 
 
-interface Statusable {
+data class Statusable (
     val status: String
-}
+)
