@@ -33,6 +33,19 @@ object ImageGenerator {
             PurchProbEntry(6, 2)
     )
 
+    private val prodProbArray = arrayOf(
+            PurchProbEntry(1, 500),
+            PurchProbEntry(2, 250),
+            PurchProbEntry(3, 130),
+            PurchProbEntry(4, 60),
+            PurchProbEntry(5, 30),
+            PurchProbEntry(6, 15),
+            PurchProbEntry(7, 8),
+            PurchProbEntry(8, 4),
+            PurchProbEntry(9, 2),
+            PurchProbEntry(10, 1)
+    )
+
     private fun getList(filename: String): List<Photo> {
         val reader = JsonReader(FileReader(filename))
         return this.gson.fromJson(reader, object : TypeToken<List<Photo>>() {}.type)
@@ -88,11 +101,24 @@ object ImageGenerator {
     }
 
     fun getProductsInPurchase(): Int {
-        return 2
+        val len = this.prodProbArray.size
+        var max = 0
+        this.prodProbArray.forEach { entry ->
+            if(entry.prob > max)
+                max = entry.prob
+        }
+
+        while(true) {
+            val index: Int = this.random.nextInt(len)
+            val value: Int = this.random.nextInt(max)
+
+            if(value < this.prodProbArray[index].prob)
+                return this.prodProbArray[index].count
+        }
     }
 
     fun getPurchaseStatus(): Int {
-        return 1 // 1/0
+        return if (this.random.nextInt(10) < 2) 0 else 1
     }
 
     class PurchProbEntry(val count: Int, val prob: Int)
