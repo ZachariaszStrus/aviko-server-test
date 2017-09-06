@@ -20,24 +20,37 @@ object PurchaseWorker {
     private lateinit var purchaseArray: ArrayList<Int>
     lateinit var purchasesFileName: String
     private var timeSum = 0L
+    private var purchaseSum = 0
 
 
     fun start(usersFileName: String, purchasesFile: String) {
         readUsers(usersFileName)
         purchaseArray = ArrayList()
         purchasesFileName = purchasesFile
+        purchaseSum = 0
 
         var i = 1
         val size = userArray.size
         for(user in userArray) {
-            System.out.println("User ($i/$size) : ${user.email}")
-            val time = measureTimeMillis{
-                registerPurchases(user)
+            try {
+                System.out.println("User ($i/$size) : ${user.email}")
+                val time = measureTimeMillis{
+                    registerPurchases(user)
+                }
+                timeSum += time
+                System.out.println("User time : $time")
+                System.out.println("--------------------------------------------------------------------")
+                i++
+
+
+                System.out.println("--------------------------------------------------------------------")
+                System.out.println("Average time : ${timeSum/i}")
+                System.out.println("Total purchases : ${purchaseSum}")
+                System.out.println("--------------------------------------------------------------------")
             }
-            timeSum += time
-            System.out.println("User time : $time")
-            System.out.println("--------------------------------------------------------------------")
-            i++
+            catch (e: Exception) {
+                System.out.println(e)
+            }
         }
 
         System.out.println("--------------------------------------------------------------------")
@@ -57,6 +70,7 @@ object PurchaseWorker {
         val purchaseService = PurchaseService(token)
 
         val purchasesNumber = ImageGenerator.getPurchasesNumber()
+        purchaseSum += purchasesNumber
         for(i in 1..purchasesNumber) {
             val purchaseTime = measureTimeMillis{
                 mageSinglePurchase(purchaseService)
