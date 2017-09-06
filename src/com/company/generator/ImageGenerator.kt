@@ -43,8 +43,10 @@ object ImageGenerator {
         val result = ArrayList<Photo>()
 
         val count = this.randomPhotoNum()
-        for(i in 1..count)
-            result.add(this.randomPhoto())
+        for(i in 1..count) {
+            val p = this.randomPhoto()
+            result.add(p)
+        }
 
         return result
     }
