@@ -3,6 +3,7 @@ package com.company.network
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
+import java.util.concurrent.TimeUnit
 
 
 val host = "http://eurekaweb.eu/backend/api"
@@ -13,7 +14,10 @@ object Http {
     init {
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BASIC
-        client = OkHttpClient.Builder().addInterceptor(logging).build()
+        client = OkHttpClient.Builder()
+                .connectTimeout(100000, TimeUnit.SECONDS)
+                .readTimeout(100000, TimeUnit.SECONDS)
+                .addInterceptor(logging).build()
     }
 
     fun post(targetURL: String, urlParameters: Any, headers: Map<String, String> = HashMap()): Response? {

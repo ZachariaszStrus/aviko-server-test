@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import java.io.FileNotFoundException
 import java.io.FileReader
 import java.io.FileWriter
 import kotlin.system.measureTimeMillis
@@ -114,21 +115,28 @@ object PurchaseWorker {
     private fun savePurchases() {
         System.out.println("Saving ... ")
 
-        val reader = JsonReader(FileReader(purchasesFileName))
-        val oldPurchaseArray: ArrayList<PurchaseRecord> =
+        var oldPurchaseArray: ArrayList<PurchaseRecord>? = null
+        try {
+            val reader = JsonReader(FileReader(purchasesFileName))
+            oldPurchaseArray =
                 Gson().fromJson(reader, object : TypeToken<ArrayList<PurchaseRecord>>() {}.type)
-        reader.close()
+            reader.close()
+
+        }
+        catch (e: FileNotFoundException) { }
 
         val writer = JsonWriter(FileWriter(purchasesFileName))
         writer.setIndent("  ")
         writer.beginArray()
 
-        for ((idPurchase, PurchaseItems, PurchaseStatus) in oldPurchaseArray) {
-            writer.beginObject()
-            writer.name("idPurchase").value(idPurchase)
-            writer.name("PurchaseItems").value(PurchaseItems)
-            writer.name("PurchaseStatus").value(PurchaseStatus)
-            writer.endObject()
+        if(oldPurchaseArray != null) {
+            for ((idPurchase, PurchaseItems, PurchaseStatus) in oldPurchaseArray) {
+                writer.beginObject()
+                writer.name("idPurchase").value(idPurchase)
+                writer.name("PurchaseItems").value(PurchaseItems)
+                writer.name("PurchaseStatus").value(PurchaseStatus)
+                writer.endObject()
+            }
         }
 
         for (id in purchaseArray) {
